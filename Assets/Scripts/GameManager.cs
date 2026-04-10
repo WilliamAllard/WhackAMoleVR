@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour
     public void CommencerJeu()
     {
         StartCoroutine(SpawnRoutine());
-        timer = 10;
+        timer = 30;
         timerActif = true;
         AfficherTimer();
         ChangerEtat(EtatJeu.EnJeu);
