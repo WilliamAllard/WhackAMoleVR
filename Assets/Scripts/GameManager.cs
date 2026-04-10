@@ -15,12 +15,11 @@ public class GameManager : MonoBehaviour
     
     private EtatJeu etatActuel;
     
+    [Header("Mole")]
     public GameObject molePrefab; 
     public Transform[] spawnPoints; 
     public float spawnInterval = 2.0f;
     public float vieDeLaMole = 1.5f; 
-    
-    [Header("TextDébut")]
     
     [Header("TextJeu")]
     public TMP_Text timerTextJeu;
@@ -38,17 +37,27 @@ public class GameManager : MonoBehaviour
     private int scoreFinal = 0;
     private int moleToucher = 0 ;
     
+    /// <summary>
+    /// Singleton
+    /// </summary>
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
 
+    /// <summary>
+    /// État de Base
+    /// </summary>
     private void Start()
     {
         ChangerEtat(EtatJeu.Menu);
     }
     
+    /// <summary>
+    /// Permet le Changement d'état du Enum
+    /// </summary>
+    /// <param name="nouvelEtat">Le Nouvel état que le Jeu veux aller</param>
     public void ChangerEtat(EtatJeu nouvelEtat)
     {
         etatActuel = nouvelEtat;
@@ -57,6 +66,9 @@ public class GameManager : MonoBehaviour
         canvasGameOver.SetActive(etatActuel == EtatJeu.GameOver);
     }
     
+    /// <summary>
+    /// Update du Timer, à 0 float ses la fin du jeu
+    /// </summary>
     private void Update()
     {
         if (timerActif)
@@ -65,11 +77,14 @@ public class GameManager : MonoBehaviour
             AfficherTimer();
             if (timer <= 0)
             {
-                finPartie();
+                FinPartie();
             }
         }
     }
     
+    /// <summary>
+    /// Permet de Commencer le Jeu
+    /// </summary>
     public void CommencerJeu()
     {
         StartCoroutine(SpawnRoutine());
@@ -101,7 +116,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void addScore(int score)
+    /// <summary>
+    /// Permet l'ajout de score/taupe et Update le Texte
+    /// </summary>
+    /// <param name="score"></param>
+    public void AddScore(int score)
     {
         scoreFinal = scoreFinal + score;
         scoreTextJeu.text = "Score : " + scoreFinal;
@@ -109,20 +128,30 @@ public class GameManager : MonoBehaviour
         moleTextJeu.text = "Taupe Toucher : " + moleToucher;
     }
 
-    private void finPartie()
+    /// <summary>
+    /// Permet de gérée la fin de la partie
+    /// </summary>
+    private void FinPartie()
     {
         StopAllCoroutines();
         timerTextFin.text = "Fin de la Partie !";
         scoreTextFin.text = "Score Final : " + scoreFinal;
         moleTextFin.text = "Total Taupe Toucher : " + moleToucher;
+        Marteau.Instance.Vibration(0.5f, 0.2f);
         ChangerEtat(EtatJeu.GameOver);
     }
-
+    
+    /// <summary>
+    /// Update le Timer
+    /// </summary>
     private void AfficherTimer()
     {
         timerTextJeu.text = "Temps Restant : " + timer.ToString("F2");
     }
     
+    /// <summary>
+    /// Pour rejouer
+    /// </summary>
     public void Rejouer()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(
@@ -130,6 +159,9 @@ public class GameManager : MonoBehaviour
         );
     }
 
+    /// <summary>
+    /// Alt-F4
+    /// </summary>
     public void Quitter()
     {
         Application.Quit();
